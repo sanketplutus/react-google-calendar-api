@@ -25,6 +25,7 @@ var ApiCalendar = function () {
             this.handleAuthClick = this.handleAuthClick.bind(this);
             this.createEvent = this.createEvent.bind(this);
             this.listUpcomingEvents = this.listUpcomingEvents.bind(this);
+            this.listAllEvents = this.listAllEvents.bind(this);
             this.createEventFromNow = this.createEventFromNow.bind(this);
             this.listenSign = this.listenSign.bind(this);
             this.onLoad = this.onLoad.bind(this);
@@ -185,7 +186,38 @@ var ApiCalendar = function () {
          * @returns {any}
          */
 
-    }, {
+    },
+    {
+        key: 'listAllEvents',
+        value: function listAllEvents(maxResults,timeMin = new Date(),timeMax = new Date(),calendarId = this.calendar) {
+         //   var calendarId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.calendar;
+            console.log("listAllEvents",maxResults)
+            if (this.gapi) {
+                return this.gapi.client.calendar.events.list({
+                    'calendarId': calendarId,
+                    'timeMin': timeMin.toISOString(),
+                    'timeMax':timeMax.toISOString(),
+                    'showDeleted': false,
+                    'singleEvents': true,
+                    'maxResults': maxResults,
+                    'orderBy': 'startTime'
+                });
+            } else {
+                console.log("Error: this.gapi not loaded");
+                return Promise.reject(new Error("Error: this.gapi not loaded"));
+            }
+        }
+        /**
+         * Create an event from the current time for a certain period
+         * @param {number} time in minutes for the event
+         * @param {string} summary of the event
+         * @param {string} description of the event
+         * @param {string} calendarId
+         * @returns {any}
+         */
+
+    }
+    , {
         key: 'createEventFromNow',
         value: function createEventFromNow(_ref) {
             var time = _ref.time,
