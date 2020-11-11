@@ -12,6 +12,7 @@ class ApiCalendar {
             this.handleAuthClick = this.handleAuthClick.bind(this);
             this.createEvent = this.createEvent.bind(this);
             this.listUpcomingEvents = this.listUpcomingEvents.bind(this);
+            this.listAllEvents = this.listAllEvents.bind(this);
             this.createEventFromNow = this.createEventFromNow.bind(this);
             this.listenSign = this.listenSign.bind(this);
             this.onLoad = this.onLoad.bind(this);
@@ -136,6 +137,24 @@ class ApiCalendar {
             return false;
         }
     }
+    listAllEvents(maxResults,timeMin = new Date('2020-11-01'),timeMax=  new Date(), calendarId = this.calendar) {
+        if (this.gapi) {
+            return this.gapi.client.calendar.events.list({
+                'calendarId': calendarId,
+                'timeMin': timeMin.toISOString(),
+                'timeMax': timeMax.toDateString(),
+                'showDeleted': false,
+                'singleEvents': true,
+                'maxResults': maxResults,
+                'orderBy': 'startTime'
+            });
+        }
+        else {
+            console.log("Error: this.gapi not loaded");
+            return false;
+        }
+    }
+    
     /**
      * Create an event from the current time for a certain period
      * @param {number} time in minutes for the event
