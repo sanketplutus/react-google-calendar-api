@@ -17,6 +17,7 @@ class ApiCalendar {
             this.listenSign = this.listenSign.bind(this);
             this.onLoad = this.onLoad.bind(this);
             this.setCalendar = this.setCalendar.bind(this);
+            this.getProfile = this.getProfile.bind(this);
             this.handleClientLoad();
         }
         catch (e) {
@@ -137,12 +138,12 @@ class ApiCalendar {
             return false;
         }
     }
-    listAllEvents(maxResults,timeMin = new Date('2020-11-01'),timeMax=  new Date(), calendarId = this.calendar) {
+    listAllEvents(maxResults, timeMin, timeMax, calendarId = this.calendar) {
         if (this.gapi) {
             return this.gapi.client.calendar.events.list({
                 'calendarId': calendarId,
                 'timeMin': timeMin.toISOString(),
-                'timeMax': timeMax.toDateString(),
+                'timeMax': timeMax.toISOString(),
                 'showDeleted': false,
                 'singleEvents': true,
                 'maxResults': maxResults,
@@ -154,7 +155,6 @@ class ApiCalendar {
             return false;
         }
     }
-    
     /**
      * Create an event from the current time for a certain period
      * @param {number} time in minutes for the event
@@ -192,6 +192,19 @@ class ApiCalendar {
             'calendarId': calendarId,
             'resource': event,
         });
+    }
+    /**
+* @param {string} userId
+* @returns {Promise} Object: { emailAddress, messagesTotal, threadsTotal , historyId }
+*/
+    getProfile(userId = "me") {
+        if (this.sign) {
+            return this.gapi.client.gmail.users.getProfile({ userId });
+        }
+        else {
+            console.log("Error: this.gapi not loaded");
+            return false;
+        }
     }
 }
 let apiCalendar;

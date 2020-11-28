@@ -19,6 +19,7 @@ class ApiCalendar {
             this.listenSign = this.listenSign.bind(this);
             this.onLoad = this.onLoad.bind(this);
             this.setCalendar = this.setCalendar.bind(this);
+            this.getProfile = this.getProfile.bind(this);
 
             this.handleClientLoad();
         } catch (e) {
@@ -143,7 +144,7 @@ class ApiCalendar {
             return false;
         }
     }
-    public listAllEvents(maxResults:number,timeMin: any,timeMax:any, calendarId = this.calendar) {
+    public listAllEvents(maxResults: number, timeMin: any, timeMax: any, calendarId: string  = this.calendar) : any {
         if (this.gapi) {
             return this.gapi.client.calendar.events.list({
                 'calendarId': calendarId,
@@ -159,7 +160,7 @@ class ApiCalendar {
             return false;
         }
     }
-    
+
     /**
      * Create an event from the current time for a certain period
      * @param {number} time in minutes for the event
@@ -168,7 +169,7 @@ class ApiCalendar {
      * @param {string} calendarId
      * @returns {any}
      */
-    public createEventFromNow({time, summary, description = ''}: any, calendarId: string = this.calendar): any {
+    public createEventFromNow({ time, summary, description = '' }: any, calendarId: string = this.calendar): any {
         const event = {
             summary,
             description,
@@ -199,6 +200,18 @@ class ApiCalendar {
             'calendarId': calendarId,
             'resource': event,
         });
+    }
+    /**
+* @param {string} userId
+* @returns {Promise} Object: { emailAddress, messagesTotal, threadsTotal , historyId }
+*/
+   public getProfile(userId:string = "me"): any {
+        if (this.sign) {
+            return this.gapi.client.gmail.users.getProfile({ userId });
+        } else {
+            console.log("Error: this.gapi not loaded");
+            return false;
+        }
     }
 }
 
